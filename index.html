@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+	<head>
+		<title>multidiff</title>
+		<style>
+td {
+	font-family: monospace;
+	padding-right: 20px;
+}
+		</style>
+		<script src='./js/vendor/d3.min.js'></script>
+	</head>
+	<body>
+		<div class='setting'>
+			loaded files:
+			<ul>
+				<li><label><input type='checkbox' checked>hello_world.bin</label> <a href='#'>[remove]</a></li>
+				<li><label><input type='checkbox' checked>hello_world.bin</label> <a href='#'>[remove]</a></li>
+				<li><label><input type='checkbox' checked>hello_world.bin</label> <a href='#'>[remove]</a></li>
+			</ul>
+			add more files:
+			<input id='file' type='file' multiple>
+			<button id='go'>go</button>
+		</div>
+		<div class='setting'>
+			pane width:
+			<input id='pane-width' type='number' min='1' max='64' value='16'>
+		</div>
+		<div class='setting'>
+			line breaks:
+			<input id='linebreaks' value='[17, 22, 31]'> (dbl click a byte to add a line break right before it)
+		</div>
+
+		<table class='diff'>
+			<thead>
+				<tr>
+					<td></td>
+					<th>hello_world.bin</th>
+					<th>hello_world.bin</th>
+					<th>hello_world.bin</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>0000</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+				</tr>
+				<tr>
+					<td>0010</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+				</tr>
+				<tr>
+					<td>0020</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+				</tr>
+				<tr>
+					<td>0030</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+					<td>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class='truncation-notice'>
+			some of your files were really long, so we only loaded the first 1024 bytes. <button>load 1024 more</button>
+		</div>
+
+		<footer>this is <a href='https://github.com/popoffka/multidiff'>multidiff</a> by <a href='https://popovs.lv'>aleksejs</a>.</footer>
+	</body>
+</html>

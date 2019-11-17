@@ -145,10 +145,9 @@ class Multidiff {
           let label = li.append('label')
           label.append('input')
             .attr('type', 'checkbox')
-            .on('click', () => {
-              let target = d3.select(d3.event.target)
-              let file = target.data()[0]
-              file.visible = target.property('checked')
+            .on('click', (file) => {
+              file.visible = d3.select(d3.event.target).property('checked')
+              this.recomputeDiffSets()
               this.renderFileList()
               this.renderDiff()
             })
@@ -156,9 +155,7 @@ class Multidiff {
           li.append('a')
             .attr('href', '#')
             .text('[remove]')
-            .on('click', () => {
-              let target = d3.select(d3.event.target)
-              let file = target.data()[0]
+            .on('click', (file) => {
               let idx = this.files.indexOf(file)
               if (idx !== -1) {
                 this.files.splice(idx, 1)
@@ -183,7 +180,7 @@ class Multidiff {
   }
 
   findSegmentLengths() {
-    let readyFiles = this.files.filter(f => f.ready)
+    let readyFiles = this.files.filter(f => f.ready && f.visible)
     if (readyFiles.length === 0) {
       return []
     }
@@ -201,7 +198,7 @@ class Multidiff {
   recomputeDiffSets () {
     this.diffSets = []
 
-    let readyFiles = this.files.filter(f => f.ready)
+    let readyFiles = this.files.filter(f => f.ready && f.visible)
     if (readyFiles.length === 0) {
       return
     }
@@ -235,7 +232,7 @@ class Multidiff {
     this.root.select('input#linebreaks')
         .attr('value', this.linebreakString)
 
-    let readyFiles = this.files.filter(f => f.ready)
+    let readyFiles = this.files.filter(f => f.ready && f.visible)
     let linesInSegment = this.findSegmentLengths().map(l => Math.ceil(l / this.paneWidth))
 
     this.root.select('table#diff')
@@ -283,8 +280,7 @@ class Multidiff {
         .text(([f, s, ps, pf]) => formatByte(f.view[pf]))
         .attr('title', ([f, s, ps, pf]) => `${f.name} at offset ${pf}`)
         .classed('mismatch', ([f, s, ps, pf]) => this.diffSets[s].has(ps))
-        .on('dblclick', () => {
-          let [f, s, ps, pf] = d3.select(d3.event.target).data()[0]
+        .on('dblclick', ([f, s, ps, pf]) => {
           if (ps !== 0) {
             // add boundary here
             f.addBoundary(pf)

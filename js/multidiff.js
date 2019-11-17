@@ -11,22 +11,32 @@ function formatByte(v) {
 }
 
 class File {
-  constructor (fileObj, readyCallback) {
+  constructor (fileObj, maxLength, readyCallback) {
     this.fileObj = fileObj
     this.name = fileObj.name
+    this.readyCallback = readyCallback
     this.visible = true
     this.boundaries = []
     this.segments = []
 
+    this.setMaxLength(maxLength)
+  }
+
+  setMaxLength(maxLength) {
+    this.maxLength = maxLength
     this.ready = false
     this.buffer = null
     this.view = null
-    this.fileObj.arrayBuffer().then(buffer => {
+
+    let length = Math.min(this.fileObj.size, maxLength)
+    this.truncated = (length < this.fileObj.size)
+    let slice = this.fileObj.slice(0, length)
+    slice.arrayBuffer().then(buffer => {
       this.ready = true
       this.buffer = buffer
       this.view = new Uint8Array(this.buffer)
       this._recomputeSegments()
-      readyCallback()
+      this.readyCallback()
     })
   }
 
@@ -86,6 +96,8 @@ class Multidiff {
   constructor (root) {
     this.root = d3.select(root)
     this.paneWidth = 16
+    this.maxLength = 1024
+    this.lengthStep = 1024
     this.linebreakString = ''
     this.diffSets = []
 
@@ -131,7 +143,7 @@ class Multidiff {
   }
 
   addFile (fileObj) {
-    this.files.push(new File(fileObj, () => this.fileReady()))
+    this.files.push(new File(fileObj, this.maxLength, () => this.fileReady()))
     this.renderFileList()
   }
 
@@ -299,6 +311,23 @@ class Multidiff {
             f.removeBoundary(pf)
             this.recomputeDiffSets()
             this.renderFileList()
+            this.renderDiff()
+          }
+        })
+
+    let anyTruncated = readyFiles.some(f => f.truncated)
+    let notice = this.root.select('#truncation-notice')
+
+    notice.classed('visible', anyTruncated)
+    notice.select('#max-length')
+        .text(this.maxLength)
+    notice.select('#step-size')
+        .text(this.lengthStep)
+    notice.select('button')
+        .on('click', () => {
+          this.maxLength += this.lengthStep
+          for (let file of this.files) {
+            file.setMaxLength(this.maxLength)
             this.renderDiff()
           }
         })

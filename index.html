@@ -40,6 +40,14 @@ span.byte.mismatch.focused {
 footer {
 	margin-top: 10px;
 }
+
+#truncation-notice {
+	display: none;
+}
+
+#truncation-notice.visible {
+	display: block;
+}
 		</style>
 		<script src='./js/vendor/d3.min.js'></script>
 		<script type='module' src='./js/multidiff.js'></script>
@@ -91,9 +99,9 @@ footer {
 			</tbody>
 		</table>
 
-		<!-- <div class='truncation-notice'>
-			some of your files were really long, so we only loaded the first 1024 bytes. <button>load 1024 more</button>
-		</div> -->
+		<div id='truncation-notice'>
+			some of your files were really long, so we only loaded the first <span id='max-length'>1024</span> bytes. <button>load <span id='step-size'>1024</span> more</button>
+		</div>
 
 		<footer>this is <a href='https://github.com/popoffka/multidiff'>multidiff</a> by <a href='https://popovs.lv'>aleksejs</a>.</footer>
 	</body>

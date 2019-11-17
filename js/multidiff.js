@@ -75,6 +75,11 @@ class File {
     this.boundaries.push(pos)
     this._recomputeSegments()
   }
+
+  removeBoundary (pos) {
+    this.boundaries = this.boundaries.filter(x => (x != pos))
+    this._recomputeSegments()
+  }
 }
 
 class Multidiff {
@@ -165,10 +170,10 @@ class Multidiff {
         },
         update => {
           update.select('input[type=checkbox]')
-              .property('checked', d => d.visible)
+              .property('checked', f => f.visible)
 
           update.select('span')
-              .text(d => d.name + ' ')
+              .text(f => `${f.name} (boundaries at [${f.boundaries.join(', ')}]) `)
 
           // this appears to be required to make D3 update the associated data for
           // the <a> nodes?
@@ -280,9 +285,19 @@ class Multidiff {
         .classed('mismatch', ([f, s, ps, pf]) => this.diffSets[s].has(ps))
         .on('dblclick', () => {
           let [f, s, ps, pf] = d3.select(d3.event.target).data()[0]
-          f.addBoundary(pf)
-          this.recomputeDiffSets()
-          this.renderDiff()
+          if (ps !== 0) {
+            // add boundary here
+            f.addBoundary(pf)
+            this.recomputeDiffSets()
+            this.renderFileList()
+            this.renderDiff()
+          } else {
+            // first byte of a segment was clicked, so we merge this segment back
+            f.removeBoundary(pf)
+            this.recomputeDiffSets()
+            this.renderFileList()
+            this.renderDiff()
+          }
         })
 
   }

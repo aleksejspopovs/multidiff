@@ -7,16 +7,18 @@ td {
 	font-family: monospace;
 	padding-right: 20px;
 }
+
+span.mismatch {
+	background: #faa;
+}
 		</style>
 		<script src='./js/vendor/d3.min.js'></script>
+		<script type='module' src='./js/multidiff.js'></script>
 	</head>
 	<body>
 		<div class='setting'>
 			loaded files:
-			<ul>
-				<li><label><input type='checkbox' checked>hello_world.bin</label> <a href='#'>[remove]</a></li>
-				<li><label><input type='checkbox' checked>hello_world.bin</label> <a href='#'>[remove]</a></li>
-				<li><label><input type='checkbox' checked>hello_world.bin</label> <a href='#'>[remove]</a></li>
+			<ul id='file-list'>
 			</ul>
 			add more files:
 			<input id='file' type='file' multiple>
@@ -26,18 +28,10 @@ td {
 			pane width:
 			<input id='pane-width' type='number' min='1' max='64' value='16'>
 		</div>
-		<div class='setting'>
-			line breaks:
-			<input id='linebreaks' value='[17, 22, 31]'> (dbl click a byte to add a line break right before it)
-		</div>
 
-		<table class='diff'>
+		<table id='diff'>
 			<thead>
 				<tr>
-					<td></td>
-					<th>hello_world.bin</th>
-					<th>hello_world.bin</th>
-					<th>hello_world.bin</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -68,9 +62,9 @@ td {
 			</tbody>
 		</table>
 
-		<div class='truncation-notice'>
+		<!-- <div class='truncation-notice'>
 			some of your files were really long, so we only loaded the first 1024 bytes. <button>load 1024 more</button>
-		</div>
+		</div> -->
 
 		<footer>this is <a href='https://github.com/popoffka/multidiff'>multidiff</a> by <a href='https://popovs.lv'>aleksejs</a>.</footer>
 	</body>

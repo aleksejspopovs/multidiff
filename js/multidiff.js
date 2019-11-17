@@ -279,7 +279,14 @@ class Multidiff {
       .join(enter => enter.append('span').classed('byte', true))
         .text(([f, s, ps, pf]) => formatByte(f.view[pf]))
         .attr('title', ([f, s, ps, pf]) => `${f.name} at offset ${pf}`)
+        .attr('data-pos', ([f, s, ps, pf]) => `${s}-${ps}`)
         .classed('mismatch', ([f, s, ps, pf]) => this.diffSets[s].has(ps))
+        .on('mouseover', ([f, s, ps, pf]) => {
+          this.highlight(s, ps, true)
+        })
+        .on('mouseout', ([f, s, ps, pf]) => {
+          this.highlight(s, ps, false)
+        })
         .on('dblclick', ([f, s, ps, pf]) => {
           if (ps !== 0) {
             // add boundary here
@@ -295,7 +302,12 @@ class Multidiff {
             this.renderDiff()
           }
         })
+  }
 
+  highlight (segment, position, value) {
+    this.root.select('table#diff')
+      .selectAll(`span[data-pos="${segment}-${position}"]`)
+        .classed('focused', value)
   }
 }
 

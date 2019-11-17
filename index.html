@@ -3,13 +3,42 @@
 	<head>
 		<title>multidiff</title>
 		<style>
+table {
+	border-collapse: collapse;
+}
+
+tbody {
+	border-top: 1px dashed black;
+}
+
 td {
-	font-family: monospace;
 	padding-right: 20px;
 }
 
-span.mismatch {
+span.byte {
+	font-family: monospace;
+	padding-left: .1em;
+	padding-right: .1em;
+}
+
+span.byte.focused {
+	background: #ddd;
+}
+
+span.byte.mismatch {
 	background: #faa;
+}
+
+span.byte.mismatch.focused {
+	background: #f55;
+}
+
+.setting {
+	border: 1px solid;
+}
+
+footer {
+	margin-top: 10px;
 }
 		</style>
 		<script src='./js/vendor/d3.min.js'></script>

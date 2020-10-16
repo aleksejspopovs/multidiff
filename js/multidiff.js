@@ -55,18 +55,6 @@ class File {
     ) {
       this.boundaries.splice(this.boundaries.length - 1, 1)
     }
-
-    // remove dupes
-    let j = 1
-    for (let i = 1; i < this.boundaries.length; i++) {
-      if (this.boundaries[i] !== this.boundaries[i - 1]) {
-        this.boundaries[j] = this.boundaries[i]
-        j++
-      }
-    }
-    if (j < this.boundaries.length) {
-      this.boundaries.splice(j, this.boundaries.length - j)
-    }
   }
 
   _recomputeSegments () {
@@ -87,7 +75,12 @@ class File {
   }
 
   removeBoundary (pos) {
-    this.boundaries = this.boundaries.filter(x => (x != pos))
+    let index = this.boundaries.indexOf(pos)
+    if (index === -1) {
+      return
+    }
+
+    this.boundaries = this.boundaries.filter((_, i) => (i !== index))
     this._recomputeSegments()
   }
 }
@@ -300,15 +293,23 @@ class Multidiff {
           this.highlight(s, ps, false)
         })
         .on('dblclick', ([f, s, ps, pf]) => {
-          if (ps !== 0) {
-            // add boundary here
-            f.addBoundary(pf)
+          if (pf === 0) {
+            return
+          }
+
+          if (d3.event.ctrlKey) {
+            if (ps !== 0) {
+              return
+            }
+            // ctrl-click on first byte of a segment:
+            // remove boundary
+            f.removeBoundary(pf)
             this.recomputeDiffSets()
             this.renderFileList()
             this.renderDiff()
           } else {
-            // first byte of a segment was clicked, so we merge this segment back
-            f.removeBoundary(pf)
+            // regular click: add boundary here
+            f.addBoundary(pf)
             this.recomputeDiffSets()
             this.renderFileList()
             this.renderDiff()

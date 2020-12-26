@@ -105,6 +105,14 @@ class Bitmap {
       }
       let canvas = document.createElement('canvas')
       document.getElementById('canvases').appendChild(canvas)
+      canvas.addEventListener('click', e => {
+        let bbox = canvas.getBoundingClientRect()
+        let x = Math.floor((e.x - bbox.x) / this.magnification)
+        let y = Math.floor((e.y - bbox.y) / this.magnification)
+        let pixelIndex = parseInt(canvas.dataset.firstPixelIndex) + y * this.lineWidth + x
+        let byteOffset = Math.floor(pixelIndex * this.bitDepth / 8)
+        alert(`clicked pixel ${pixelIndex} (${x}, ${y}), that's ${byteOffset} bytes from the beginning of the view`)
+      })
       return canvas
     }
     let initializeCanvas = (firstPixelIndex) => {
@@ -112,14 +120,7 @@ class Bitmap {
       canvas.width = this.lineWidth
       canvas.style.width = `${canvas.width * this.magnification}px`
       canvas.height = this.maxHeight
-      canvas.addEventListener('click', e => {
-        let bbox = canvas.getBoundingClientRect()
-        let x = Math.floor((e.x - bbox.x) / this.magnification)
-        let y = Math.floor((e.y - bbox.y) / this.magnification)
-        let pixelIndex = firstPixelIndex + y * this.lineWidth + x
-        let byteOffset = Math.floor(pixelIndex * this.bitDepth / 8)
-        alert(`clicked pixel ${pixelIndex} (${x}, ${y}), that's ${byteOffset} bytes from the beginning of the view`)
-      })
+      canvas.dataset.firstPixelIndex = firstPixelIndex
       let ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       return ctx

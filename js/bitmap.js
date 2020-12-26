@@ -107,11 +107,19 @@ class Bitmap {
       document.getElementById('canvases').appendChild(canvas)
       return canvas
     }
-    let initializeCanvas = () => {
+    let initializeCanvas = (firstPixelIndex) => {
       let canvas = _takeCanvas()
       canvas.width = this.lineWidth
       canvas.style.width = `${canvas.width * this.magnification}px`
       canvas.height = this.maxHeight
+      canvas.addEventListener('click', e => {
+        let bbox = canvas.getBoundingClientRect()
+        let x = Math.floor((e.x - bbox.x) / this.magnification)
+        let y = Math.floor((e.y - bbox.y) / this.magnification)
+        let pixelIndex = firstPixelIndex + y * this.lineWidth + x
+        let byteOffset = Math.floor(pixelIndex * this.bitDepth / 8)
+        alert(`clicked pixel ${pixelIndex} (${x}, ${y}), that's ${byteOffset} bytes from the beginning of the view`)
+      })
       let ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       return ctx
@@ -133,7 +141,7 @@ class Bitmap {
       let x = i % this.lineWidth
 
       if ((x === 0) && (y % this.maxHeight === 0)) {
-        ctx = initializeCanvas()
+        ctx = initializeCanvas(i)
       }
 
       let value = reader.take(this.bitDepth)

@@ -91,7 +91,6 @@ class Multidiff {
     this.paneWidth = 16
     this.maxLength = 1024
     this.lengthStep = 1024
-    this.linebreakString = ''
     this.diffSets = []
 
     this.files = []
@@ -115,17 +114,6 @@ class Multidiff {
     this.root.select('input#pane-width')
         .on('input', () => {
           this.paneWidth = parseInt(d3.event.target.value)
-          this.renderDiff()
-        })
-
-    this.root.select('input#linebreaks')
-        .on('input', () => {
-          this.linebreakString = d3.event.target.value
-          try {
-            this.linebreaks = JSON.parse(this.linebreakString)
-          } catch (e) {
-            // whatever
-          }
           this.renderDiff()
         })
   }
@@ -234,8 +222,6 @@ class Multidiff {
   renderDiff () {
     this.root.select('input#pane-width')
         .attr('value', this.paneWidth)
-    this.root.select('input#linebreaks')
-        .attr('value', this.linebreakString)
 
     let readyFiles = this.files.filter(f => f.ready && f.visible)
     let linesInSegment = this.findSegmentLengths().map(l => Math.ceil(l / this.paneWidth))

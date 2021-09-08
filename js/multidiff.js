@@ -116,6 +116,27 @@ class Multidiff {
           this.paneWidth = parseInt(d3.event.target.value)
           this.renderDiff()
         })
+
+    this.root.select('button#edit-boundaries')
+        .on('click', () => {
+          const boundaries = Object.fromEntries(this.files.map(f => [f.name, f.boundaries]))
+          let newBoundaries = JSON.parse(prompt('boundaries?', JSON.stringify(boundaries)))
+          if (newBoundaries === null) {
+            return
+          }
+
+          for (let file of this.files) {
+            if (newBoundaries[file.name] === undefined) {
+              continue
+            }
+            file.boundaries = newBoundaries[file.name]
+            file._recomputeSegments()
+          }
+
+          this.recomputeDiffSets()
+          this.renderFileList()
+          this.renderDiff()
+        })
   }
 
   fileReady () {

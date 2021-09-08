@@ -43,8 +43,8 @@ class File {
   _validateBoundaries () {
     this.boundaries.sort((a, b) => a - b)
 
-    // remove anything <= 0
-    while ((this.boundaries.length > 0) && (this.boundaries[0] <= 0)) {
+    // remove anything < 0
+    while ((this.boundaries.length > 0) && (this.boundaries[0] < 0)) {
       this.boundaries.splice(0, 1)
     }
 
@@ -279,10 +279,6 @@ class Multidiff {
           this.highlight(s, ps, false)
         })
         .on('dblclick', ([f, s, ps, pf]) => {
-          if (pf === 0) {
-            return
-          }
-
           if (d3.event.ctrlKey) {
             if (ps !== 0) {
               return
